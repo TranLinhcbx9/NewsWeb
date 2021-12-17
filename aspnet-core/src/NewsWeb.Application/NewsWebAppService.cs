@@ -14,5 +14,6 @@ namespace NewsWeb
         {
             LocalizationResource = typeof(NewsWebResource);
         }
+        //Hello
     }
 }
