@@ -1,47 +1,63 @@
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { AdminLayoutModule } from './layouts/admin-layout/admin-layout.module';
+import { AccountConfigModule } from '@abp/ng.account/config';
+import { CoreModule } from '@abp/ng.core';
+import { registerLocale } from '@abp/ng.core/locale';
+import { IdentityConfigModule } from '@abp/ng.identity/config';
+import { SettingManagementConfigModule } from '@abp/ng.setting-management/config';
+import { TenantManagementConfigModule } from '@abp/ng.tenant-management/config';
+import { ThemeBasicModule } from '@abp/ng.theme.basic';
+import { ThemeSharedModule } from '@abp/ng.theme.shared';
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-
-
-import { AppRoutingModule } from './app.routing';
-import { ComponentsModule } from './components/components.module';
-
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+import { environment } from '../environments/environment';
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
-import { TableListComponent } from './table-list/table-list.component';
-import { TypographyComponent } from './typography/typography.component';
-import { IconsComponent } from './icons/icons.component';
-import { MapsComponent } from './maps/maps.component';
-import { NotificationsComponent } from './notifications/notifications.component';
-import { UpgradeComponent } from './upgrade/upgrade.component';
-import {
-  AgmCoreModule
-} from '@agm/core';
-import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
+import { APP_ROUTE_PROVIDER } from './route.provider';
+import { FixedPluginModule } from './shared/fixedplugin/fixedplugin.module';
+import { FooterModule } from './shared/footer/footer.module';
+import { NavbarModule } from './shared/navbar/navbar.module';
+import { SidebarModule } from './sidebar/sidebar.module';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { UserComponent } from './pages/user/user.component';
+import { TableComponent } from './pages/table/table.component';
+import { UpgradeComponent } from './pages/upgrade/upgrade.component';
+import { TypographyComponent } from './pages/typography/typography.component';
+import { IconsComponent } from './pages/icons/icons.component';
+import { MapsComponent } from './pages/maps/maps.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { RoutesComponent } from './routes/routes.component';
 
 @NgModule({
   imports: [
+    BrowserModule,
     BrowserAnimationsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    ComponentsModule,
-    RouterModule,
     AppRoutingModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'YOUR_GOOGLE_MAPS_API_KEY'
-    })
+    CoreModule.forRoot({
+      environment,
+      registerLocaleFn: registerLocale(),
+    }),
+    ThemeSharedModule.forRoot(),
+    AccountConfigModule.forRoot(),
+    IdentityConfigModule.forRoot(),
+    TenantManagementConfigModule.forRoot(),
+    SettingManagementConfigModule.forRoot(),
+    ThemeBasicModule.forRoot(),
+    SharedModule,
+    SidebarModule,
+    NavbarModule,
+    ToastrModule.forRoot(),
+    FooterModule,
+    FixedPluginModule,
+    AdminLayoutModule
   ],
-  declarations: [
-    AppComponent,
-    AdminLayoutComponent,
-
+  declarations: [AppComponent, RoutesComponent,
+   
+  
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [APP_ROUTE_PROVIDER],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
