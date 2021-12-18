@@ -12,7 +12,11 @@ namespace NewsWeb.APIs.ArticleServices.Dto
         public Guid Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
+        public string Description { get; set; }
+        public string IconImagePath { get; set; }
         public long ViewCount { get; set; }
         public TopicCodeEnum? Topic { get; set; }
+        //public DateTime? CreationTime { get; set; }
+        //public DateTime? LastmodificationTime { get; set; }
     }
 }

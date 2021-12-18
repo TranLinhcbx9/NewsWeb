@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NewsWeb.APIs.ArticleServices.Dto;
 using NewsWeb.Entities;
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -15,6 +17,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Volo.Abp;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using static NewsWeb.Enums.Enum;
@@ -25,31 +28,44 @@ namespace NewsWeb.APIs.ArticleServices
     {
         private readonly IRepository<Article, Guid> _articleRepository;
         private const string URL = "http://127.0.0.1:8000/";
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public ArticleService(IRepository<Article, Guid> articleRepository)
+
+        public ArticleService(IRepository<Article, Guid> articleRepository, IHostingEnvironment environment)
         {
             _articleRepository = articleRepository;
+            _hostingEnvironment = environment;
         }
-        public async Task<List<ArticleDto>> GetAllPagging(int? skipCount, int maxResultCount, string searchText)
+        public async Task<List<ArticleDto>> GetAllPagging(PagedAndSortedResultRequestDto param, string searchText)
         {
             string cleanSearchText = "";
+            int? topicLabel = null;
             if (!String.IsNullOrEmpty(searchText))
             {
                 cleanSearchText = Regex.Replace((searchText.Trim().ToLower()), @"\s+", " ");
+
+                topicLabel = await DataLabel(new InputAIDto { text = searchText });
+                //var test = (TopicCodeEnum)Enum.Parse(typeof(TopicCodeEnum), topicLabel);
             }
 
-            if (!skipCount.HasValue)
-                skipCount = 0;
+            //if (!skipCount.HasValue)
+            //    skipCount = 0;
             var items = await _articleRepository.GetListAsync();
-            var results = items.Where(x => String.IsNullOrEmpty(searchText) || x.Title.Contains(cleanSearchText))
+            var results = items.Where(x => String.IsNullOrEmpty(searchText) || x.Title.Contains(cleanSearchText) || !x.Topic.HasValue || (int)x.Topic.Value == topicLabel)
                 .Select(item => new ArticleDto
                 {
                     Id = item.Id,
                     Title = item.Title,
                     Content = item.Content,
-                    ViewCount = item.ViewCount
+                    ViewCount = item.ViewCount,
+                    Topic = item.Topic,
+                    //CreationTime = item.CreationTime,
+                    //LastmodificationTime = item.LastmodificationTime,
+                    IconImagePath = item.IconImagePath != null ? "/IconImage/" + item.IconImagePath : "",
+                    //IconImagePath = item.IconImagePath,
+                    Description = item.Description
                 });
-            return results.Skip(skipCount.Value).Take(maxResultCount).ToList();
+            return results.Skip(param.SkipCount).Take(param.MaxResultCount).ToList();
         }
         public async Task<ArticleDto> Create(ArticleDto input)
         {
@@ -60,10 +76,40 @@ namespace NewsWeb.APIs.ArticleServices
                 Content = input.Content,
                 Title = input.Title,
                 ViewCount = input.ViewCount,
+                Topic = input.Topic,
+                //CreationTime = DateTime.Now,
+                Description = input.Description,
+                IconImagePath = input.IconImagePath,
+                //LastmodificationTime = DateTime.Now
                 //Topic = (TopicCodeEnum)Enum.Parse(typeof(TopicCodeEnum), topicLabel)
             };
-            
+
             var todoItem = await _articleRepository.InsertAsync(article);
+
+            return input;
+        }
+        public async Task<ArticleDto> CreateMany(ArticleDto input)
+        {
+            for(int i = 1; i < 100; i++)
+            {
+                var article = new Article
+                {
+                    //Id = input.Id,
+                    Content = $"{input.Content} {i}",
+                    Title = $"{input.Title} {i}",
+                    ViewCount = i*1000,
+                    Topic = input.Topic,
+                    //CreationTime = DateTime.Now,
+                    Description = $"{input.Description} {i}",
+                    //IconImagePath = input.IconImagePath,
+                    //LastmodificationTime = DateTime.Now
+                    //Topic = (TopicCodeEnum)Enum.Parse(typeof(TopicCodeEnum), topicLabel)
+                };
+
+                var todoItem = await _articleRepository.InsertAsync(article);
+
+            }
+            //var topicLabel = await DataLabel(new InputAIDto { text = input.Content });
 
             return input;
         }
@@ -79,6 +125,10 @@ namespace NewsWeb.APIs.ArticleServices
             article.Title = input.Title;
             article.Content = input.Content;
             article.ViewCount = input.ViewCount;
+            article.Topic = input.Topic;
+            //article.LastmodificationTime = DateTime.Now;
+            article.IconImagePath = input.IconImagePath;
+            article.Description = input.Description;
             return input;
         }
         public async Task Delete(Guid id)
@@ -116,6 +166,52 @@ namespace NewsWeb.APIs.ArticleServices
                 {
                     return default;
                 }
+            }
+        }
+
+        public async Task<string> UpdateIconImage([FromForm] IconImageDto input)
+        {
+            String path = Path.Combine(_hostingEnvironment.WebRootPath, "IconImage");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            if (input != null && input.File != null && input.File.Length > 0)
+            {
+                string FileExtension = Path.GetExtension(input.File.FileName).ToLower();
+
+                if (FileExtension == ".jpeg" || FileExtension == ".png" || FileExtension == ".jpg" || FileExtension == ".gif")
+                {
+                    if (input.File.Length > 21048576)
+                    {
+                        throw new UserFriendlyException(String.Format("File needs to be less than 1MB!"));
+                    }
+                    else
+                    {
+                        //get user to take name + code
+                        Article article = await _articleRepository.GetAsync(input.ArticleId);
+                        //set avatar name = milisecond + id + name + extension
+                        String iconImagePath = DateTimeOffset.Now.ToUnixTimeMilliseconds()
+                            + "_" + input.ArticleId
+                            //+ "_" + article.Title
+                            + Path.GetExtension(input.File.FileName);
+                        using (var stream = System.IO.File.Create(Path.Combine(_hostingEnvironment.WebRootPath, "IconImage", iconImagePath)))
+                        {
+                            await input.File.CopyToAsync(stream);
+                            article.IconImagePath = iconImagePath;
+                            await _articleRepository.UpdateAsync(article);
+                        }
+                        return "/IconImage/" + iconImagePath;
+                    }
+                }
+                else
+                {
+                    throw new UserFriendlyException(String.Format("File can not upload!"));
+                }
+            }
+            else
+            {
+                throw new UserFriendlyException(String.Format("No file upload!"));
             }
         }
 
