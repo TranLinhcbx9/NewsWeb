@@ -99,9 +99,9 @@ namespace NewsWeb.APIs.ArticleServices
 
             return input;
         }
-        public async Task<ArticleDto> CreateMany(ArticleDto input)
+        public async Task<ArticleDto> CreateMany(ArticleDto input, int maxRecords)
         {
-            for(int i = 1; i < 100; i++)
+            for(int i = 1; i < maxRecords; i++)
             {
                 var article = new Article
                 {
@@ -110,9 +110,9 @@ namespace NewsWeb.APIs.ArticleServices
                     Title = $"{input.Title} {i}",
                     ViewCount = i*1000,
                     Topic = input.Topic,
-                    //CreationTime = DateTime.Now,
+                    CreationTime = input.CreationTime.Value,
                     Description = $"{input.Description} {i}",
-                    //IconImagePath = input.IconImagePath,
+                    IconImagePath = input.IconImagePath,
                     //LastmodificationTime = DateTime.Now
                     //Topic = (TopicCodeEnum)Enum.Parse(typeof(TopicCodeEnum), topicLabel)
                 };
