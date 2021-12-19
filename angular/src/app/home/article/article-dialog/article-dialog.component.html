@@ -1,0 +1,62 @@
+<div class="card-header">
+    <h2>Create Article</h2>
+</div>
+<div class="card-body">
+    <form #articleForm="ngForm">
+        <div class="form-group row">
+            <label for="" class="col-2">
+                Title
+            </label>
+            <mat-form-field class="col-8" appearance="outline">
+                <input type="text" name="title" id="" matInput [(ngModel)]="article.title">
+            </mat-form-field>
+        </div>
+        <div class="form-group row">
+            <label for="" class="col-2">
+                Content:
+            </label>
+            <mat-form-field class="col-8" appearance="outline">
+                <textarea rows="2" matInput [(ngModel)]="article.content" name="content">
+        </textarea>
+            </mat-form-field>
+        </div>
+        <div class="form-group row">
+            <label for="" class="col-2">
+                image:
+            </label>
+            <div style="padding-top: 10px; border-top: 1px solid #eee;">
+                <label style="display: block; margin-bottom: 15px;">Choose file</label>
+                <input type="file" class="form-group" id="file"  (change)="selectFile($event)">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="" class="col-2">
+                Description:
+            </label>
+            <mat-form-field class="col-8" appearance="outline">
+                <textarea rows="2" matInput [(ngModel)]="article.description" name="description">
+    </textarea>
+            </mat-form-field>
+        </div>
+        <div class="form-group row">
+            <label for="" class="col-2">
+                View count:
+            </label>
+            <mat-form-field class="col-8" appearance="outline">
+                <input type="text" name="" id="" matInput [(ngModel)]="article.viewCount" name="viewCount">
+            </mat-form-field>
+        </div>
+        <div class="form-group row">
+            <label for="" class="col-2">
+                Topic:
+            </label>
+            <mat-form-field class="col-8" appearance="outline">
+                <input type="text" name="" id="" matInput [(ngModel)]="article.topic" name="topic">
+            </mat-form-field>
+        </div>
+        <div class="row justify-content-end">
+            <button class="btn btn-default" mat-dialog-close="">cancel</button>
+            <button class="btn btn-primary" (click)="saveAndClose()">Save</button>
+        </div>
+    </form>
+</div>
