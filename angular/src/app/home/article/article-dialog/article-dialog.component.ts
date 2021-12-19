@@ -5,6 +5,7 @@ import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToasterService } from '@abp/ng.theme.shared';
 import { AppComponentBase } from 'src/app/shared/app-component-base';
+import { enumTopicCodeEnumOptions } from '@proxy/news-web/enums';
 
 @Component({
   selector: 'app-article-dialog',
@@ -13,8 +14,8 @@ import { AppComponentBase } from 'src/app/shared/app-component-base';
 })
 export class ArticleDialogComponent extends AppComponentBase implements OnInit {
   article = {} as ArticleDto
-  selectedFiles: FileList;
-
+  rootUrl: string = "https://localhost:44357/"
+  topicList = enumTopicCodeEnumOptions
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, injector: Injector, private toast: ToasterService, 
     public dialogRef: MatDialogRef<ArticleDialogComponent>, private articleService: ArticleService, private uploadFileService:UploadfileService) {
     super();
@@ -28,28 +29,22 @@ export class ArticleDialogComponent extends AppComponentBase implements OnInit {
   saveAndClose() {
     if (!this.data?.id) {
       this.articleService.createByInput(this.article).subscribe(rs => {
-        this.uploadFileService.uploadFile( this.selectedFiles, rs.id
-        ).subscribe(rs => {
-          this.toast.success("Create success", "success")
-          this.dialogRef.close(this.article)
-        })
+        this.toast.success("Create success", "success")
+        this.dialogRef.close(this.article)
       })
     }
     else {
       this.articleService.updateByInput(this.article).subscribe(rs => {
-        this.uploadFileService.uploadFile(this.selectedFiles, rs.id).subscribe(rs => {
-          this.toast.success(`updated article ${this.article.title}`, "success")
-          this.dialogRef.close(this.article)
-        })
+        this.toast.success(`updated article ${this.article.title}`, "success")
+        this.dialogRef.close(this.article)
       })
     }
   }
-  selectFile(event) {
-    this.selectedFiles = event.target.files.item(0);
-  }
+
   generateTopic() {
+    console.log(this.topicList)
     this.articleService.dataLabelByInput({ text: this.article.content }).subscribe(rs => {
-      this.article.topic = rs
+      this.article.topic = this.topicList.filter(item=> item.value == rs)[0].key
     })
   }
 }

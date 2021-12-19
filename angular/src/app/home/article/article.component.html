@@ -57,7 +57,6 @@
               <td class="text-center">{{i+1}}</td>
               <td>{{item.title}}</td>
               <td style="word-wrap: break-word; white-space: pre-line;">
-                
                 <div style="max-height: 300px; overflow-y: scroll; word-wrap: break-word; white-space: pre-line;">
                   {{item.content}}
                 </div>
@@ -69,7 +68,8 @@
               <td>{{item.viewCount}}</td>
               <td>{{item.topic}}</td>
               <td class="text-center">{{item.creationTime | date:"dd/MM/yyyy"}}</td>
-              <td class="text-center" style="width: 150px;">
+              <td class="text-center" style="width: 250px;">
+                <button class="btn btn-success btn-sm mr-1" (click)="uploadImage(item)">Upload Image</button>
                 <button class="btn btn-primary btn-sm mr-1" (click)="editArticle(item)">Edit</button>
                 <button class="btn btn-danger btn-sm mr-1" (click)="deleteArticle(item)">Delete</button>
               </td>

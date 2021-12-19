@@ -8,7 +8,7 @@ export interface ArticleDto {
   description?: string;
   iconImagePath?: string;
   viewCount: number;
-  topic?: EnumTopicCodeEnum;
+  topic?: any;
   creationTime?: string;
   rate: number;
 }
