@@ -17,10 +17,10 @@ import { Confirmation, ConfirmationService, ToasterService } from '@abp/ng.theme
   providers: [ListService]
 })
 export class ArticleComponent implements OnInit {
-  rootUrl:string ="https://localhost:44357/"
+  rootUrl: string = "https://localhost:44357/"
   articleList: ArticleDto[] = []
   constructor(public readonly list: ListService, private dialog: MatDialog, private router: Router, private toast: ToasterService, private confirmation: ConfirmationService,
-    private authService: AuthService, private articaleService: ArticleService,  private uploadFileService: UploadfileService) { }
+    private authService: AuthService, private articaleService: ArticleService, private uploadFileService: UploadfileService) { }
 
   ngOnInit(): void {
     this.getAllArticle()
@@ -31,7 +31,7 @@ export class ArticleComponent implements OnInit {
     // this.list.hookToQuery(bookStreamCreator).subscribe((response) => {
     //   this.articleList = response;
     // });
-    
+
     this.articaleService.getAllPaggingByParamAndSearchText({ maxResultCount: 20, skipCount: 0, sorting: "" }, "").subscribe(data => {
       this.articleList = data, console.log(data)
     })
@@ -73,6 +73,11 @@ export class ArticleComponent implements OnInit {
         }
 
       });
+  }
+  generateTopic(content: string) {
+    this.articaleService.dataLabelByInput({ text: content }).subscribe(rs => {
+      this.getAllArticle()
+    })
   }
 
 }
