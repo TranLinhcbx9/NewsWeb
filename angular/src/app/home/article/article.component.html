@@ -1,6 +1,9 @@
 <div class="card">
-    <div class="card-header">
+    <div class="card-header row justify-content-between">
       <h3>Article list</h3>
+      <button class="btn btn-primary btn-sm" (click)="createArticle()">
+        create Article
+      </button>
     </div>
     <div class="card-body">
       <table class="table ">
@@ -26,15 +29,13 @@
               <td>{{item.viewCount}}</td>
               <td>{{item.topic}}</td>
               <td>
-                <button class="btn btn-primary" (click)="editArticle(item)">Edit</button>
-                <button class="btn btn-danger" (click)="deleteArticle(item)">Delete</button>
-
+                <button class="btn btn-primary btn-sm mr-1" (click)="editArticle(item)">Edit</button>
+                <button class="btn btn-danger btn-sm mr-1" (click)="deleteArticle(item)">Delete</button>
+                <button class="btn btn-success btn-sm" (click)="generateTopic(item.content)">generate topic</button>
               </td>
             </tr>
           </tbody>
       </table>
     </div>
   </div>
-  <button class="btn btn-primary" (click)="createArticle()">
-    create Article
-  </button>
+ 
