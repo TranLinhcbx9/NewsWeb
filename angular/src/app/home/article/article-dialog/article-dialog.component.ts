@@ -21,6 +21,7 @@ export class ArticleDialogComponent extends AppComponentBase implements OnInit {
     super();
   }
 
+  
   ngOnInit(): void {
     if (this.data) {
       this.article = this.data

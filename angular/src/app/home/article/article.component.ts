@@ -12,6 +12,7 @@ import { Confirmation, ConfirmationService, ToasterService } from '@abp/ng.theme
 import * as FileSaver from 'file-saver';
 import * as moment from 'moment';
 import { UploadImgComponent } from './upload-img/upload-img.component';
+import { enumTopicCodeEnumOptions } from '@proxy/news-web/enums';
 
 @Component({
   selector: 'app-article',
@@ -27,6 +28,7 @@ export class ArticleComponent implements OnInit {
   searchText
   p =1
   selectedFiles: FileList;
+  topicList = enumTopicCodeEnumOptions
 
   constructor(public readonly list: ListService, private dialog: MatDialog, private router: Router, private toast: ToasterService, private confirmation: ConfirmationService,
     private authService: AuthService, private articaleService: ArticleService, private uploadFileService: UploadfileService) { }
@@ -43,6 +45,12 @@ export class ArticleComponent implements OnInit {
 
     this.articaleService.getAllPaggingByParamAndSearchTextAndStartDateAndEndDate({ maxResultCount: 1000, skipCount: 0, sorting: "" }, this.searchText,this.startDate,this.endDate).subscribe((data:any) => {
       this.articleList = data.results
+      this.articleList.forEach(item=>{
+        if(item.topic>=0){
+          item.topic = this.topicList.find(topic=>topic.value == item.topic).key
+  
+        }
+      })
     })
 
   }
