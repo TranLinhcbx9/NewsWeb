@@ -40,11 +40,19 @@ export class ArticleService {
     },
     { apiName: this.apiName });
 
-  getAllPaggingByParamAndSearchText = (param: PagedAndSortedResultRequestDto, searchText: string) =>
-    this.restService.request<any, ArticleDto[]>({
+  exportExcelByStartDateAndEndDate = (startDate: string, endDate: string) =>
+    this.restService.request<any, number[]>({
+      method: 'POST',
+      url: '/api/app/article/export-excel',
+      params: { startDate, endDate },
+    },
+    { apiName: this.apiName });
+
+  getAllPaggingByParamAndSearchTextAndStartDateAndEndDate = (param: PagedAndSortedResultRequestDto, searchText: string, startDate: string, endDate: string) =>
+    this.restService.request<any, object>({
       method: 'GET',
       url: '/api/app/article/pagging',
-      params: { skipCount: param.skipCount, maxResultCount: param.maxResultCount, sorting: param.sorting, searchText },
+      params: { skipCount: param.skipCount, maxResultCount: param.maxResultCount, sorting: param.sorting, searchText, startDate, endDate },
     },
     { apiName: this.apiName });
 
