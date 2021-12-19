@@ -49,6 +49,7 @@
             </th>
             <th>viewCount</th>
             <th>topic</th>
+            <th>Created time</th>
             <th>Action</th>
           </tr>
           <tbody>
@@ -67,10 +68,10 @@
               <td>{{item.description}}</td>
               <td>{{item.viewCount}}</td>
               <td>{{item.topic}}</td>
+              <td class="text-center">{{item.creationTime | date:"dd/MM/yyyy"}}</td>
               <td class="text-center" style="width: 150px;">
                 <button class="btn btn-primary btn-sm mr-1" (click)="editArticle(item)">Edit</button>
                 <button class="btn btn-danger btn-sm mr-1" (click)="deleteArticle(item)">Delete</button>
-               
               </td>
             </tr>
           </tbody>
