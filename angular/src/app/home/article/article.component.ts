@@ -9,6 +9,8 @@ import { Component, OnInit } from '@angular/core';
 import { ArticleDto } from '@proxy/news-web/apis/article-services/dto';
 import { MatDialog } from '@angular/material/dialog';
 import { Confirmation, ConfirmationService, ToasterService } from '@abp/ng.theme.shared';
+import * as FileSaver from 'file-saver';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-article',
@@ -19,6 +21,8 @@ import { Confirmation, ConfirmationService, ToasterService } from '@abp/ng.theme
 export class ArticleComponent implements OnInit {
   rootUrl: string = "https://localhost:44357/"
   articleList: ArticleDto[] = []
+  startDate
+  endDate
   constructor(public readonly list: ListService, private dialog: MatDialog, private router: Router, private toast: ToasterService, private confirmation: ConfirmationService,
     private authService: AuthService, private articaleService: ArticleService, private uploadFileService: UploadfileService) { }
 
@@ -32,8 +36,8 @@ export class ArticleComponent implements OnInit {
     //   this.articleList = response;
     // });
 
-    this.articaleService.getAllPaggingByParamAndSearchText({ maxResultCount: 20, skipCount: 0, sorting: "" }, "").subscribe(data => {
-      this.articleList = data, console.log(data)
+    this.articaleService.getAllPaggingByParamAndSearchTextAndStartDateAndEndDate({ maxResultCount: 20, skipCount: 0, sorting: "" }, "",this.startDate,this.endDate).subscribe((data:any) => {
+      this.articleList = data.results
     })
 
   }
@@ -71,13 +75,25 @@ export class ArticleComponent implements OnInit {
             this.getAllArticle()
           })
         }
-
       });
   }
-  generateTopic(content: string) {
-    this.articaleService.dataLabelByInput({ text: content }).subscribe(rs => {
-      this.getAllArticle()
+
+
+  downloadFile() {
+    this.startDate = moment(this.startDate).format("YYYY-MM-DD")
+    this.endDate = moment(this.endDate).format("YYYY-MM-DD")
+    this.articaleService.exportExcelByStartDateAndEndDate(this.startDate,this.endDate).subscribe((data:any)=>{
+      const file = new Blob([this.s2ab(atob(data))], {
+        type: "application/vnd.ms-excel;charset=utf-8"
+      });
+      FileSaver.saveAs(file, "article");
     })
+  }
+  s2ab(s) {
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
   }
 
 }

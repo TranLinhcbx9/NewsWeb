@@ -15,7 +15,7 @@ export class ArticleDialogComponent extends AppComponentBase implements OnInit {
   article = {} as ArticleDto
   selectedFiles: FileList;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, injector: Injector, private toast: ToasterService,
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, injector: Injector, private toast: ToasterService, 
     public dialogRef: MatDialogRef<ArticleDialogComponent>, private articleService: ArticleService, private uploadFileService:UploadfileService) {
     super();
   }
@@ -41,12 +41,15 @@ export class ArticleDialogComponent extends AppComponentBase implements OnInit {
           this.toast.success(`updated article ${this.article.title}`, "success")
           this.dialogRef.close(this.article)
         })
-
       })
     }
-
   }
   selectFile(event) {
     this.selectedFiles = event.target.files.item(0);
+  }
+  generateTopic() {
+    this.articleService.dataLabelByInput({ text: this.article.content }).subscribe(rs => {
+      this.article.topic = rs
+    })
   }
 }

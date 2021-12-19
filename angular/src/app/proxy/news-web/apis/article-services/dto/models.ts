@@ -9,6 +9,7 @@ export interface ArticleDto {
   iconImagePath?: string;
   viewCount: number;
   topic?: EnumTopicCodeEnum;
+  creationTime?: string;
 }
 
 export interface IconImageDto {

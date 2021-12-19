@@ -46,13 +46,17 @@
                 <input type="text" name="" id="" matInput [(ngModel)]="article.viewCount" name="viewCount">
             </mat-form-field>
         </div>
+       
         <div class="form-group row">
             <label for="" class="col-2">
                 Topic:
             </label>
-            <mat-form-field class="col-8" appearance="outline">
-                <input type="text" name="" id="" matInput [(ngModel)]="article.topic" name="topic">
+            <mat-form-field class="col-5" appearance="outline">
+                <input type="text" name="" id="" matInput [(ngModel)]="article.topic" name="topic" [disabled]="!article.content">
             </mat-form-field>
+            <div class="col-3">
+                <button class="btn btn-success btn-sm" (click)="generateTopic()">generate topic</button>
+            </div>
         </div>
         <div class="row justify-content-end">
             <button class="btn btn-default" mat-dialog-close="">cancel</button>
