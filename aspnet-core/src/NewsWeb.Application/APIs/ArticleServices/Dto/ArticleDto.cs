@@ -17,6 +17,7 @@ namespace NewsWeb.APIs.ArticleServices.Dto
         public long ViewCount { get; set; }
         public TopicCodeEnum? Topic { get; set; }
         public DateTime? CreationTime { get; set; }
+        public int Rate { get; set; }
 
         //Hello
         //public DateTime? CreationTime { get; set; }
