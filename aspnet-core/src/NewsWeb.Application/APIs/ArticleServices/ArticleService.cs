@@ -129,6 +129,7 @@ namespace NewsWeb.APIs.ArticleServices
             //article.LastmodificationTime = DateTime.Now;
             article.IconImagePath = input.IconImagePath;
             article.Description = input.Description;
+            await _articleRepository.UpdateAsync(article);
             return input;
         }
         public async Task Delete(Guid id)
