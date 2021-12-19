@@ -1,0 +1,40 @@
+<div class="card">
+    <div class="card-header">
+      <h3>Article list</h3>
+    </div>
+    <div class="card-body">
+      <table class="table ">
+          <tr>
+            <th>title</th>
+            <th>content</th>
+            <th>image</th>
+            <th>
+              description
+            </th>
+            <th>viewCount</th>
+            <th>topic</th>
+            <th>Action</th>
+          </tr>
+          <tbody>
+            <tr *ngFor="let item of articleList">
+              <td>{{item.title}}</td>
+              <td>{{item.content}}</td>
+              <td>
+                <img width="150px" [src]="rootUrl+item.iconImagePath" alt="">
+               </td>
+              <td>{{item.description}}</td>
+              <td>{{item.viewCount}}</td>
+              <td>{{item.topic}}</td>
+              <td>
+                <button class="btn btn-primary" (click)="editArticle(item)">Edit</button>
+                <button class="btn btn-danger" (click)="deleteArticle(item)">Delete</button>
+
+              </td>
+            </tr>
+          </tbody>
+      </table>
+    </div>
+  </div>
+  <button class="btn btn-primary" (click)="createArticle()">
+    create Article
+  </button>

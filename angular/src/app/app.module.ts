@@ -1,3 +1,8 @@
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ArticleDialogComponent } from './home/article/article-dialog/article-dialog.component';
+import { ArticleComponent } from './home/article/article.component';
+import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AdminLayoutModule } from './layouts/admin-layout/admin-layout.module';
 import { AccountConfigModule } from '@abp/ng.account/config';
@@ -7,7 +12,7 @@ import { IdentityConfigModule } from '@abp/ng.identity/config';
 import { SettingManagementConfigModule } from '@abp/ng.setting-management/config';
 import { TenantManagementConfigModule } from '@abp/ng.tenant-management/config';
 import { ThemeBasicModule } from '@abp/ng.theme.basic';
-import { ThemeSharedModule } from '@abp/ng.theme.shared';
+import { ThemeSharedModule, ToasterService } from '@abp/ng.theme.shared';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +34,8 @@ import { IconsComponent } from './pages/icons/icons.component';
 import { MapsComponent } from './pages/maps/maps.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { RoutesComponent } from './routes/routes.component';
+import {MatDialogModule} from '@angular/material/dialog'
+
 
 @NgModule({
   imports: [
@@ -51,9 +58,12 @@ import { RoutesComponent } from './routes/routes.component';
     ToastrModule.forRoot(),
     FooterModule,
     FixedPluginModule,
-    AdminLayoutModule
+    AdminLayoutModule,
+    CommonModule,
+
   ],
-  declarations: [AppComponent, RoutesComponent,
+  declarations: [AppComponent, RoutesComponent, ArticleDialogComponent,
+    ArticleComponent
    
   
   ],

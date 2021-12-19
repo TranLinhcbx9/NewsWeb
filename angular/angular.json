@@ -30,6 +30,7 @@
             "allowedCommonJsDependencies": ["chart.js", "js-sha256"],
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               {
                 "input": "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
                 "inject": true,
@@ -50,12 +51,12 @@
                 "inject": true,
                 "bundleName": "ngx-datatable-icons"
               },
+           
               {
                 "input": "node_modules/@swimlane/ngx-datatable/themes/material.css",
                 "inject": true,
                 "bundleName": "ngx-datatable-material"
               },
-           
               {
                 "input": "node_modules/bootstrap/dist/css/bootstrap.min.css",
                 "inject": true,
@@ -125,7 +126,7 @@
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "styles": ["./node_modules/@angular/material/prebuilt-themes/indigo-pink.css", "src/styles.scss"],
             "scripts": []
           }
         },

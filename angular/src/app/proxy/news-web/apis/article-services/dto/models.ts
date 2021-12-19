@@ -1,4 +1,4 @@
-import type { Enum+TopicCodeEnum } from '../../../enums/enum+topic-code-enum.enum';
+import type { EnumTopicCodeEnum } from '../../../enums/enum+topic-code-enum.enum';
 import type { IFormFile } from '../../../../microsoft/asp-net-core/http/models';
 
 export interface ArticleDto {
@@ -8,9 +8,7 @@ export interface ArticleDto {
   description?: string;
   iconImagePath?: string;
   viewCount: number;
-  topic?: Enum+TopicCodeEnum;
-  creationTime?: string;
-  lastmodificationTime?: string;
+  topic?: EnumTopicCodeEnum;
 }
 
 export interface IconImageDto {
