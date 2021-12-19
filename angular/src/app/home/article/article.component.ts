@@ -23,6 +23,8 @@ export class ArticleComponent implements OnInit {
   articleList: ArticleDto[] = []
   startDate
   endDate
+  searchText
+  p =1
   constructor(public readonly list: ListService, private dialog: MatDialog, private router: Router, private toast: ToasterService, private confirmation: ConfirmationService,
     private authService: AuthService, private articaleService: ArticleService, private uploadFileService: UploadfileService) { }
 
@@ -36,7 +38,7 @@ export class ArticleComponent implements OnInit {
     //   this.articleList = response;
     // });
 
-    this.articaleService.getAllPaggingByParamAndSearchTextAndStartDateAndEndDate({ maxResultCount: 20, skipCount: 0, sorting: "" }, "",this.startDate,this.endDate).subscribe((data:any) => {
+    this.articaleService.getAllPaggingByParamAndSearchTextAndStartDateAndEndDate({ maxResultCount: 20, skipCount: 0, sorting: "" }, this.searchText,this.startDate,this.endDate).subscribe((data:any) => {
       this.articleList = data.results
     })
 

@@ -1,3 +1,4 @@
+import { NgxPaginationModule } from 'ngx-pagination';
 import { FixedPluginModule } from './fixedplugin/fixedplugin.module';
 import { SidebarModule } from './../sidebar/sidebar.module';
 import { NavbarModule } from './navbar/navbar.module';
@@ -99,6 +100,7 @@ import {MatSelectModule} from '@angular/material/select';
     MatTreeModule,
     MatFormFieldModule,
     MatSelectModule,
+    NgxPaginationModule
   ],
   providers: []
 })
