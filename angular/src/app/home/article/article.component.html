@@ -25,8 +25,22 @@
     
     </div>
     <div class="card-body">
+      <div class="card-header">
+
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <button type="button" class="btn bg-blue" (click)="getAllArticle()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+                (keyup.enter)="getAllArticle()" />
+           
+        </div>
+    </div>
       <table class="table ">
           <tr>
+            <th style="width: 50px;">#</th>
             <th>title</th>
             <th>content</th>
             <th>image</th>
@@ -35,26 +49,34 @@
             </th>
             <th>viewCount</th>
             <th>topic</th>
+            <th>Created time</th>
             <th>Action</th>
           </tr>
           <tbody>
-            <tr *ngFor="let item of articleList">
+            <tr *ngFor="let item of articleList | paginate: { itemsPerPage: 10, currentPage: p }; let i =index">
+              <td class="text-center">{{i+1}}</td>
               <td>{{item.title}}</td>
-              <td>{{item.content}}</td>
-              <td>
+              <td style="word-wrap: break-word; white-space: pre-line;">
+                
+                <div style="max-height: 300px; overflow-y: scroll; word-wrap: break-word; white-space: pre-line;">
+                  {{item.content}}
+                </div>
+                </td>
+              <td class="text-center">
                 <img width="150px" [src]="rootUrl+item.iconImagePath" alt="">
                </td>
               <td>{{item.description}}</td>
               <td>{{item.viewCount}}</td>
               <td>{{item.topic}}</td>
-              <td>
+              <td class="text-center">{{item.creationTime | date:"dd/MM/yyyy"}}</td>
+              <td class="text-center" style="width: 150px;">
                 <button class="btn btn-primary btn-sm mr-1" (click)="editArticle(item)">Edit</button>
                 <button class="btn btn-danger btn-sm mr-1" (click)="deleteArticle(item)">Delete</button>
-               
               </td>
             </tr>
           </tbody>
       </table>
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
     </div>
   </div>
  

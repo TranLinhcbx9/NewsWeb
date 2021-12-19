@@ -10,6 +10,7 @@ export interface ArticleDto {
   viewCount: number;
   topic?: EnumTopicCodeEnum;
   creationTime?: string;
+  rate: number;
 }
 
 export interface IconImageDto {

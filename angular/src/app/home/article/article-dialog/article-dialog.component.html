@@ -1,5 +1,5 @@
 <div class="card-header">
-    <h2>Create Article</h2>
+    <h2>Create Article {{data?"Edit Article":"Create Article"}}</h2>
 </div>
 <div class="card-body">
     <form #articleForm="ngForm">
@@ -16,7 +16,7 @@
                 Content:
             </label>
             <mat-form-field class="col-8" appearance="outline">
-                <textarea rows="2" matInput [(ngModel)]="article.content" name="content">
+                <textarea rows="8" matInput [(ngModel)]="article.content" name="content">
         </textarea>
             </mat-form-field>
         </div>
@@ -55,7 +55,7 @@
                 <input type="text" name="" id="" matInput [(ngModel)]="article.topic" name="topic" [disabled]="!article.content">
             </mat-form-field>
             <div class="col-3">
-                <button class="btn btn-success btn-sm" (click)="generateTopic()">generate topic</button>
+                <button class="btn btn-success btn-sm mt-1" (click)="generateTopic()">generate topic</button>
             </div>
         </div>
         <div class="row justify-content-end">

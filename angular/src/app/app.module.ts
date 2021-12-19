@@ -35,6 +35,7 @@ import { MapsComponent } from './pages/maps/maps.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { RoutesComponent } from './routes/routes.component';
 import {MatDialogModule} from '@angular/material/dialog'
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @NgModule({
@@ -60,6 +61,7 @@ import {MatDialogModule} from '@angular/material/dialog'
     FixedPluginModule,
     AdminLayoutModule,
     CommonModule,
+    NgxPaginationModule
 
   ],
   declarations: [AppComponent, RoutesComponent, ArticleDialogComponent,

@@ -17,10 +17,11 @@ export class ArticleService {
     },
     { apiName: this.apiName });
 
-  createManyByInput = (input: ArticleDto) =>
+  createManyByInputAndMaxRecords = (input: ArticleDto, maxRecords: number) =>
     this.restService.request<any, ArticleDto>({
       method: 'POST',
       url: '/api/app/article/many',
+      params: { maxRecords },
       body: input,
     },
     { apiName: this.apiName });
@@ -69,6 +70,13 @@ export class ArticleService {
       method: 'PUT',
       responseType: 'text',
       url: '/api/app/article/icon-image',
+    },
+    { apiName: this.apiName });
+
+  updateRate = () =>
+    this.restService.request<any, void>({
+      method: 'PUT',
+      url: '/api/app/article/rate',
     },
     { apiName: this.apiName });
 
