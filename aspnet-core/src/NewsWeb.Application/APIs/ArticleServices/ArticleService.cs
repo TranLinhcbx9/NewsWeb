@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NewsWeb.APIs.ArticleServices.Dto;
@@ -36,7 +37,7 @@ namespace NewsWeb.APIs.ArticleServices
             _articleRepository = articleRepository;
             _hostingEnvironment = environment;
         }
-        public async Task<List<ArticleDto>> GetAllPagging(PagedAndSortedResultRequestDto param, string searchText)
+        public async Task<List<ArticleDto>> GetAllPagging(PagedAndSortedResultRequestDto param, string searchText, DateTime? startDate, DateTime? endDate)
         {
             string cleanSearchText = "";
             int? topicLabel = null;
@@ -51,7 +52,10 @@ namespace NewsWeb.APIs.ArticleServices
             //if (!skipCount.HasValue)
             //    skipCount = 0;
             var items = await _articleRepository.GetListAsync();
-            var results = items.Where(x => String.IsNullOrEmpty(searchText) || x.Title.Contains(cleanSearchText) || !x.Topic.HasValue || (int)x.Topic.Value == topicLabel)
+            var results = items
+                .Where(x => String.IsNullOrEmpty(searchText) || x.Title.Contains(cleanSearchText) || !x.Topic.HasValue || (int)x.Topic.Value == topicLabel)
+                .Where(x => !startDate.HasValue || x.CreationTime.Date >= startDate.Value.Date)
+                .Where(x => !endDate.HasValue || x.CreationTime.Date <= endDate.Value.Date)
                 .Select(item => new ArticleDto
                 {
                     Id = item.Id,
@@ -63,9 +67,10 @@ namespace NewsWeb.APIs.ArticleServices
                     //LastmodificationTime = item.LastmodificationTime,
                     IconImagePath = item.IconImagePath != null ? "/IconImage/" + item.IconImagePath : "",
                     //IconImagePath = item.IconImagePath,
-                    Description = item.Description
+                    Description = item.Description,
+                    CreationTime = item.CreationTime
                 });
-            return results.Skip(param.SkipCount).Take(param.MaxResultCount).ToList();
+            return results.Skip(param.SkipCount).Take(param.MaxResultCount).OrderByDescending(x => x.CreationTime).ToList();
         }
         public async Task<ArticleDto> Create(ArticleDto input)
         {
@@ -214,6 +219,68 @@ namespace NewsWeb.APIs.ArticleServices
             {
                 throw new UserFriendlyException(String.Format("No file upload!"));
             }
+        }
+
+        public async Task<byte[]> ExportExcel(DateTime? startDate, DateTime? endDate)
+        {
+            try
+            {
+                using (var wb = new XLWorkbook())
+                {
+                    var ArticleWS = wb.Worksheets.Add("Article List");
+                    var qArticles = await _articleRepository.GetListAsync();
+                    var articles = qArticles
+                        .Where(x => !startDate.HasValue || x.CreationTime.Date >= startDate.Value.Date)
+                        .Where(x => !endDate.HasValue || x.CreationTime.Date <= endDate.Value.Date)
+                        .Select(x => new ArticleDto
+                        {
+                            Id = x.Id,
+                            Title = x.Title,
+                            Description = x.Description,
+                            ViewCount = x.ViewCount,
+                            Topic = x.Topic,
+                            Content = x.Content,
+                            IconImagePath = x.IconImagePath,
+                            CreationTime = x.CreationTime
+                        }).ToList();
+   
+                    int currentRow = 1;
+                    int stt = 0;
+                    ArticleWS.Cell(currentRow, 1).Value = "STT";
+                    ArticleWS.Cell(currentRow, 2).Value = "Mã bài báo";
+                    ArticleWS.Cell(currentRow, 3).Value = "Tiêu đề";
+                    ArticleWS.Cell(currentRow, 4).Value = "Chủ đề";
+                    ArticleWS.Cell(currentRow, 5).Value = "Mô tả tóm tắt";
+                    ArticleWS.Cell(currentRow, 6).Value = "Nội dung";
+                    ArticleWS.Cell(currentRow, 7).Value = "Số lượt đọc";
+                    ArticleWS.Cell(currentRow, 8).Value = "Ngày đăng";
+             
+                    foreach (var item in articles)
+                    {
+                        currentRow++;
+                        stt++;
+                        ArticleWS.Cell(currentRow, 1).Value = stt;
+                        ArticleWS.Cell(currentRow, 2).Value = item.Id;
+                        ArticleWS.Cell(currentRow, 3).Value = item.Title;
+                        ArticleWS.Cell(currentRow, 4).Value = item.Topic;
+                        ArticleWS.Cell(currentRow, 5).Value = item.Description;
+                        ArticleWS.Cell(currentRow, 6).Value = item.Content;
+                        ArticleWS.Cell(currentRow, 7).Value = item.ViewCount;
+                        ArticleWS.Cell(currentRow, 8).Value = item.CreationTime;
+                    }
+                    using (var stream = new MemoryStream())
+                    {
+                        wb.SaveAs(stream);
+                        var content = stream.ToArray();
+                        return content;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException(String.Format("error: " + ex.Message));
+            }
+
         }
 
         //[HttpGet]

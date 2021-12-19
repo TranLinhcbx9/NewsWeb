@@ -16,6 +16,7 @@ namespace NewsWeb.APIs.ArticleServices.Dto
         public string IconImagePath { get; set; }
         public long ViewCount { get; set; }
         public TopicCodeEnum? Topic { get; set; }
+        public DateTime? CreationTime { get; set; }
 
         //Hello
         //public DateTime? CreationTime { get; set; }
