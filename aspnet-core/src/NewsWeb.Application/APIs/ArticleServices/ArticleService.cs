@@ -53,7 +53,7 @@ namespace NewsWeb.APIs.ArticleServices
             //    skipCount = 0;
             var items = await _articleRepository.GetListAsync();
             var qResults = items
-                .Where(x => String.IsNullOrEmpty(searchText) || x.Title.Contains(cleanSearchText) || !x.Topic.HasValue || (int)x.Topic.Value == topicLabel)
+                .Where(x => String.IsNullOrEmpty(searchText) || String.IsNullOrEmpty(x.Title) || x.Title.Contains(cleanSearchText))
                 .Where(x => !startDate.HasValue || x.CreationTime.Date >= startDate.Value.Date)
                 .Where(x => !endDate.HasValue || x.CreationTime.Date <= endDate.Value.Date)
                 .Select(item => new ArticleDto
@@ -71,7 +71,7 @@ namespace NewsWeb.APIs.ArticleServices
                     CreationTime = item.CreationTime
                 });
             var totalCount = qResults.Count();
-            var results = qResults.Skip(param.SkipCount).Take(param.MaxResultCount).OrderByDescending(x => x.CreationTime).ToList();
+            var results = qResults.OrderByDescending(x => x.CreationTime).Skip(param.SkipCount).Take(param.MaxResultCount).ToList();
             return new
             {
                 totalCount,
@@ -226,7 +226,26 @@ namespace NewsWeb.APIs.ArticleServices
                 throw new UserFriendlyException(String.Format("No file upload!"));
             }
         }
-
+        public async Task UpdateRate()
+        {
+            var qArticles = await _articleRepository.GetListAsync();
+            foreach (var article in qArticles)
+            {
+                if (article.ViewCount < 1000)
+                    article.Rate = 0;
+                else if(article.ViewCount>=1000 && article.ViewCount<=10000)
+                    article.Rate = 1;
+                else if (article.ViewCount >= 10000 && article.ViewCount <= 50000)
+                    article.Rate = 2;
+                else if (article.ViewCount >= 50000 && article.ViewCount <= 250000)
+                    article.Rate = 3;
+                else if (article.ViewCount >= 250000 && article.ViewCount <= 1000000)
+                    article.Rate = 4;
+                else if (article.ViewCount >= 1000000)
+                    article.Rate = 5;
+                await _articleRepository.UpdateAsync(article);
+            }
+        }
         public async Task<byte[]> ExportExcel(DateTime? startDate, DateTime? endDate)
         {
             try
@@ -248,7 +267,7 @@ namespace NewsWeb.APIs.ArticleServices
                             Content = x.Content,
                             IconImagePath = x.IconImagePath,
                             CreationTime = x.CreationTime
-                        }).ToList();
+                        }).OrderByDescending(x => x.CreationTime).ToList();
    
                     int currentRow = 1;
                     int stt = 0;
