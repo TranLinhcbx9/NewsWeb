@@ -37,7 +37,7 @@ namespace NewsWeb.APIs.ArticleServices
             _articleRepository = articleRepository;
             _hostingEnvironment = environment;
         }
-        public async Task<List<ArticleDto>> GetAllPagging(PagedAndSortedResultRequestDto param, string searchText, DateTime? startDate, DateTime? endDate)
+        public async Task<object> GetAllPagging(PagedAndSortedResultRequestDto param, string searchText, DateTime? startDate, DateTime? endDate)
         {
             string cleanSearchText = "";
             int? topicLabel = null;
@@ -52,7 +52,7 @@ namespace NewsWeb.APIs.ArticleServices
             //if (!skipCount.HasValue)
             //    skipCount = 0;
             var items = await _articleRepository.GetListAsync();
-            var results = items
+            var qResults = items
                 .Where(x => String.IsNullOrEmpty(searchText) || x.Title.Contains(cleanSearchText) || !x.Topic.HasValue || (int)x.Topic.Value == topicLabel)
                 .Where(x => !startDate.HasValue || x.CreationTime.Date >= startDate.Value.Date)
                 .Where(x => !endDate.HasValue || x.CreationTime.Date <= endDate.Value.Date)
@@ -70,7 +70,13 @@ namespace NewsWeb.APIs.ArticleServices
                     Description = item.Description,
                     CreationTime = item.CreationTime
                 });
-            return results.Skip(param.SkipCount).Take(param.MaxResultCount).OrderByDescending(x => x.CreationTime).ToList();
+            var totalCount = qResults.Count();
+            var results = qResults.Skip(param.SkipCount).Take(param.MaxResultCount).OrderByDescending(x => x.CreationTime).ToList();
+            return new
+            {
+                totalCount,
+                results
+            };
         }
         public async Task<ArticleDto> Create(ArticleDto input)
         {
