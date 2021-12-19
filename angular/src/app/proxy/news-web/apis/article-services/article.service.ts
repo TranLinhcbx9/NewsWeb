@@ -17,6 +17,14 @@ export class ArticleService {
     },
     { apiName: this.apiName });
 
+  createManyByInput = (input: ArticleDto) =>
+    this.restService.request<any, ArticleDto>({
+      method: 'POST',
+      url: '/api/app/article/many',
+      body: input,
+    },
+    { apiName: this.apiName });
+
   dataLabelByInput = (input: InputAIDto) =>
     this.restService.request<any, number>({
       method: 'POST',

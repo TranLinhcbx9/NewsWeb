@@ -2,7 +2,7 @@
 export interface IFormFile {
   contentType?: string;
   contentDisposition?: string;
-  headers: Record<string, StringValues>;
+  headers: any;
   length: number;
   name?: string;
   fileName?: string;

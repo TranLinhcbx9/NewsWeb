@@ -11,7 +11,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
   styleUrls: ['./home.component.scss'],
   providers: [ListService]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent  {
   get hasLoggedIn(): boolean {
     return this.oAuthService.hasValidAccessToken();
   }
@@ -23,18 +23,7 @@ export class HomeComponent implements OnInit {
   login() {
     this.authService.navigateToLogin();
   }
-  ngOnInit(): void {
-    const bookStreamCreator = (query) => this.articaleService.getAllPaggingByParamAndSearchText(query,"");
-
-    // this.list.hookToQuery(bookStreamCreator).subscribe((response) => {
-    //   this.articleList = response;
-    // });
-    this.articaleService.getAllPaggingByParamAndSearchText(0, 10, "").subscribe(data => {
-      console.log(data)
-      this.articleList = data
-    })
-
-  }
+ 
   navDashboard(){
     this.router.navigate(["dashboard"])
   }
