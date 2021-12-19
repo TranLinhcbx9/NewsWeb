@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Confirmation, ConfirmationService, ToasterService } from '@abp/ng.theme.shared';
 import * as FileSaver from 'file-saver';
 import * as moment from 'moment';
+import { UploadImgComponent } from './upload-img/upload-img.component';
 
 @Component({
   selector: 'app-article',
@@ -25,6 +26,8 @@ export class ArticleComponent implements OnInit {
   endDate
   searchText
   p =1
+  selectedFiles: FileList;
+
   constructor(public readonly list: ListService, private dialog: MatDialog, private router: Router, private toast: ToasterService, private confirmation: ConfirmationService,
     private authService: AuthService, private articaleService: ArticleService, private uploadFileService: UploadfileService) { }
 
@@ -38,7 +41,7 @@ export class ArticleComponent implements OnInit {
     //   this.articleList = response;
     // });
 
-    this.articaleService.getAllPaggingByParamAndSearchTextAndStartDateAndEndDate({ maxResultCount: 20, skipCount: 0, sorting: "" }, this.searchText,this.startDate,this.endDate).subscribe((data:any) => {
+    this.articaleService.getAllPaggingByParamAndSearchTextAndStartDateAndEndDate({ maxResultCount: 1000, skipCount: 0, sorting: "" }, this.searchText,this.startDate,this.endDate).subscribe((data:any) => {
       this.articleList = data.results
     })
 
@@ -75,6 +78,7 @@ export class ArticleComponent implements OnInit {
           this.articaleService.deleteById(article.id).subscribe(rs => {
             this.toast.success(`Deleted article ${article.title}`, "Success")
             this.getAllArticle()
+            this.searchText =""
           })
         }
       });
@@ -96,6 +100,20 @@ export class ArticleComponent implements OnInit {
     var view = new Uint8Array(buf);
     for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
     return buf;
+  }
+  selectFile(event) {
+    this.selectedFiles = event.target.files.item(0);
+  }
+  uploadImage(article:ArticleDto){
+   
+    let ref =   this.dialog.open(UploadImgComponent,{
+        data: article
+      })
+      ref.afterClosed().subscribe(rs=>{
+        if(rs){
+          this.getAllArticle()
+        }
+      })
   }
 
 }
